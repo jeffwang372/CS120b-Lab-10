@@ -6,7 +6,7 @@
  * I acknowledge all content contained herein, excluding template or example
  * code is my own original work.
  *
- *  Demo Link:
+ *  Demo Link: https://drive.google.com/file/d/1vKgn9z1wqz4r1BhlMzW1yxTDRMxh7mhA/view?usp=sharing
  */
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -388,33 +388,34 @@ int SMFunc4(int state) {
 //-----------------
 //
 enum editStates {CodeStart, WaitComb, WaitBuffer, InputComb, CombBuffer} ;
+unsigned char j = 0x01;
 
 int editFunc(int state) {
-	unsigned char inputB = ~PINB;
-//	unsigned char outputB = 0x00;
-//	       outputB = PORTB;
-	unsigned char x = 0x00;
-		x = GetKeypadKey();
-	unsigned char j = 0x01;
+	unsigned char inputB = 0x00;
+	inputB = ~PINB & 0x80;
+
+	unsigned char x;
+	x = GetKeypadKey();
+
 
 	switch(state) {
 		case CodeStart: 
 			state = WaitComb; 
 			break;
 
-		case WaitComb: //state = (((inputB & 0x80) == 0x80) && (x == '*'))? WaitBuffer: WaitComb; break;
+		case WaitComb: 
 				if(((inputB & 0x80) == 0x80) && (x == '*')) {
 					state = WaitBuffer;
 				}
 				break;
-		case WaitBuffer: //state = (((inputB & 0x80) != 0x80) && (x != '*'))? InputComb: WaitBuffer; break;
+		case WaitBuffer: 
 				if (((inputB & 0x80) != 0x80) && (x != '*')) {
 					state = InputComb;
 				}
 				break;
 		
 		case InputComb:
-				if(j >= 5) {
+				if(j >= 0x05) {
 					j = 0x01;
 					state = WaitComb;
 				}
@@ -433,22 +434,26 @@ int editFunc(int state) {
 			break;
 	}
 	switch(state) {
-		case CodeStart: break;
-//			outputB = 0x0F;
-		case WaitComb: break;
-//			outputB = 0x01;
-		case WaitBuffer: break;
-//			outputB = 0x02;
-		case InputComb: break;
-//			outputB = 0x03;
+		case CodeStart:
+
+			break;
+		case WaitComb:
+
+			break;
+		case WaitBuffer:
+
+			break;
+		case InputComb:
+
+			break;
 		case CombBuffer:
 			code[j] = x;
-//			outputB = 0x04;
+
 			break;
 		default:
 			break;
 	}
-//	PORTB = outputB;
+
 	return state;
 }
 
@@ -487,7 +492,7 @@ int main(void) {
 	task2.state = start;
         task2.period = 1;
         task2.elapsedTime = task2.period;
-        task2.TickFct = &SMFunc2;
+  	task2.TickFct = &SMFunc2;
 
 	task3.state = start;
         task3.period = 200;
